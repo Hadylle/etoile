@@ -1,15 +1,33 @@
 import 'package:animated_login/animated_login.dart';
 import 'package:flutter/material.dart';
+import 'package:app/password_reset_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
-
-
+final GoogleSignIn _googleSignIn = GoogleSignIn();
 
 class LoginScreen extends StatefulWidget {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  Future<UserCredential> signInWithGoogle() async {
+    final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser!.authentication;
+
+    final OAuthCredential credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    final UserCredential userCredential =
+        await FirebaseAuth.instance.signInWithCredential(credential);
+    return userCredential;
+  }
+
   /// Simulates the multilanguage, you will implement your own logic.
   /// According to the current language, you can display a text message
   /// with the help of [LoginTexts] class.
-  const LoginScreen({Key? key}) : super(key: key);
 
+  LoginScreen({Key? key}) : super(key: key);
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
@@ -31,11 +49,11 @@ class _LoginScreenState extends State<LoginScreen> {
       loginDesktopTheme: _desktopTheme,
       loginMobileTheme: _mobileTheme,
       loginTexts: _loginTexts,
-      changeLanguageCallback: (LanguageOption? _language) {
-        if (_language != null) {
+      changeLanguageCallback: (LanguageOption? language) {
+        if (language != null) {
           DialogBuilder(context).showResultDialog(
-              'Successfully changed the language to: ${_language.value}.');
-          if (mounted) setState(() => language = _language);
+              'Successfully changed the language to: ${language.value}.');
+          if (mounted) setState(() => language = language);
         }
       },
       languageOptions: _languageOptions,
@@ -77,7 +95,8 @@ class _LoginScreenState extends State<LoginScreen> {
   /// You can also set some additional display options such as [showLabelTexts].
   LoginViewTheme get _mobileTheme => LoginViewTheme(
         // showLabelTexts: false,
-        backgroundColor: Color.fromARGB(255, 128, 4, 4), // const Color(0xFF6666FF),
+        backgroundColor:
+            const Color.fromARGB(255, 128, 4, 4), // const Color(0xFF6666FF),
         formFieldBackgroundColor: Colors.white,
         formWidthRatio: 60,
         // actionButtonStyle: ButtonStyle(
@@ -143,11 +162,30 @@ class LoginFunctions {
 
   /// Social login callback example.
   Future<String?> socialLogin(String type) async {
-    DialogBuilder(context).showLoadingDialog();
-    await Future.delayed(const Duration(seconds: 2));
-    Navigator.of(context).pop();
-    DialogBuilder(context)
-        .showResultDialog('Successful social login with $type.');
+    try {
+      DialogBuilder(context).showLoadingDialog();
+
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser!.authentication;
+
+      final OAuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      final UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+
+      Navigator.of(context).pop(); // Cacher le dialogue de chargement
+
+      DialogBuilder(context).showResultDialog('Successful login with Google.');
+    } catch (error) {
+      Navigator.of(context).pop(); // Cacher le dialogue de chargement
+      print("Erreur d'authentification Google : $error");
+      DialogBuilder(context).showResultDialog('Failed to login with Google.');
+    }
+
     return null;
   }
 
@@ -159,6 +197,7 @@ class LoginFunctions {
     Navigator.of(context).pop();
     // You should determine this path and create the screen.
     // Navigator.of(context).pushNamed('/forgotPass');
+
     return null;
   }
 }
@@ -176,7 +215,7 @@ class DialogBuilder {
         builder: (BuildContext context) => WillPopScope(
           onWillPop: () async => false,
           child: const AlertDialog(
-            content:  SizedBox(
+            content: SizedBox(
               width: 100,
               height: 100,
               child: Center(
@@ -189,7 +228,6 @@ class DialogBuilder {
           ),
         ),
       );
-      
 
   /// Example result dialog
   Future<void> showResultDialog(String text) => showDialog(
@@ -202,5 +240,4 @@ class DialogBuilder {
           ),
         ),
       );
-    
 }

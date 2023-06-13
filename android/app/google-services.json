@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "807503265620",
+    "project_id": "club-sportive",
+    "storage_bucket": "club-sportive.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:807503265620:android:219b77ecc5d6627a6912c1",
+        "android_client_info": {
+          "package_name": "com.example.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "807503265620-22nrcj07pfnkrkiul96gd26667s3it9q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyClwanXJ8zcs8vXSLP2eUJSP5YwgY7YUB0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "807503265620-22nrcj07pfnkrkiul96gd26667s3it9q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

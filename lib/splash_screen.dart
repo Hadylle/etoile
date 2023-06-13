@@ -13,7 +13,7 @@ class _Spalch_screenState extends State<Spalch_screen> {
     return EasySplashScreen(
       logo: Image.network(
           'https://cdn4.iconfinder.com/data/icons/logos-brands-5/24/flutter-512.png'),
-      title: Text(
+      title: const Text(
         "Title",
         style: TextStyle(
           fontSize: 18,
@@ -22,7 +22,7 @@ class _Spalch_screenState extends State<Spalch_screen> {
       ),
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       showLoader: true,
-      loadingText: Text("Loading..."),
+      loadingText: const Text("Loading..."),
       navigator: '/slide',
       durationInSeconds: 3,
     );
